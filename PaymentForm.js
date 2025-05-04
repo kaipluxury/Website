@@ -1,0 +1,1 @@
+// Collects Discord username + proof of payment
