@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complete Payment</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section class="hero">
+    <h2>Complete Your Payment</h2>
+    <p>Pay via UPI or Crypto and submit the form below</p>
+    <div>
+      <p><strong>UPI ID:</strong> yourupi@paytm</p>
+      <p><strong>Crypto (USDT TRC20):</strong> TRC123456789XYZ</p>
+    </div>
+    <form id="ticketForm" onsubmit="return submitOrder(event)">
+      <input type="hidden" id="productInput" name="product" />
+      <label>Your Discord Username:</label><br>
+      <input type="text" name="discord" required><br><br>
+      <label>Payment Screenshot Link:</label><br>
+      <input type="text" name="proof" required><br><br>
+      <label>Note (optional):</label><br>
+      <textarea name="note"></textarea><br><br>
+      <button type="submit" class="buy-btn">Submit Order</button>
+    </form>
+  </section>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const product = params.get("product") || "Unknown";
+    document.getElementById("productInput").value = product;
+
+    function submitOrder(event) {
+      event.preventDefault();
+      const form = event.target;
+      const data = new FormData(form);
+
+      const payload = {
+        content: "**New Order Submitted**",
+        embeds: [{
+          title: "Order Details",
+          fields: [
+            { name: "Product", value: data.get("product") },
+            { name: "Discord Username", value: data.get("discord") },
+            { name: "Payment Proof", value: data.get("proof") },
+            { name: "Note", value: data.get("note") || "None" }
+          ],
+          color: 3092790
+        }]
+      };
+
+      fetch("YOUR_DISCORD_WEBHOOK_URL", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        form.innerHTML = "<h3>✅ Order submitted! Ticket will be created in Discord.</h3>";
+      });
+      return false;
+    }
+  </script>
+</body>
+</html>
